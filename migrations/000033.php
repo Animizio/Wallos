@@ -1,11 +1,13 @@
 <?php
-// This migration adds a "show_subscription_progress" column to the settings table and sets to false as default.
+// Diese Migration fügt eine "type"-Spalte zur subscriptions-Tabelle hinzu,
+// um zu unterscheiden, ob es sich um eine Ausgabe (expense) oder eine Einnahme (income) handelt
 
 /** @noinspection PhpUndefinedVariableInspection */
-$columnQuery = $db->query("SELECT * FROM pragma_table_info('settings') where name='show_subscription_progress'");
+$columnQuery = $db->query("SELECT * FROM pragma_table_info('subscriptions') where name='type'");
 $columnRequired = $columnQuery->fetchArray(SQLITE3_ASSOC) === false;
 
 if ($columnRequired) {
-    $db->exec("ALTER TABLE settings ADD COLUMN show_subscription_progress BOOLEAN DEFAULT 0");
-    $db->exec('UPDATE settings SET `show_subscription_progress` = 0');
+    // Standardmäßig sind alle bestehenden Einträge Ausgaben (0)
+    $db->exec('ALTER TABLE subscriptions ADD COLUMN type INTEGER DEFAULT 0');
+    echo "Spalte 'type' wurde zur Tabelle 'subscriptions' hinzugefügt.\n";
 }

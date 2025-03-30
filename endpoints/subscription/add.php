@@ -201,6 +201,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         $inactive = isset($_POST['inactive']) ? true : false;
         $cancellationDate = $_POST['cancellation_date'] ?? null;
         $replacementSubscriptionId = $_POST['replacement_subscription_id'];
+        $type = isset($_POST['type']) ? $_POST['type'] : 0; // 0 = Ausgabe, 1 = Einnahme
 
         if ($replacementSubscriptionId == 0 || $inactive == 0) {
             $replacementSubscriptionId = null;
@@ -224,12 +225,12 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                         name, logo, price, currency_id, next_payment, cycle, frequency, notes, 
                         payment_method_id, payer_user_id, category_id, notify, inactive, url, 
                         notify_days_before, user_id, cancellation_date, replacement_subscription_id,
-                        auto_renew, start_date
+                        auto_renew, start_date, type
                     ) VALUES (
                         :name, :logo, :price, :currencyId, :nextPayment, :cycle, :frequency, :notes, 
                         :paymentMethodId, :payerUserId, :categoryId, :notify, :inactive, :url, 
                         :notifyDaysBefore, :userId, :cancellationDate, :replacement_subscription_id,
-                        :autoRenew, :startDate
+                        :autoRenew, :startDate, :type
                     )";
         } else {
             $id = $_POST['id'];
@@ -251,7 +252,8 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                         url = :url, 
                         notify_days_before = :notifyDaysBefore, 
                         cancellation_date = :cancellationDate, 
-                        replacement_subscription_id = :replacement_subscription_id";
+                        replacement_subscription_id = :replacement_subscription_id,
+                        type = :type";
 
             if ($logo != "") {
                 $sql .= ", logo = :logo";
@@ -286,6 +288,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         }
         $stmt->bindParam(':userId', $userId, SQLITE3_INTEGER);
         $stmt->bindParam(':replacement_subscription_id', $replacementSubscriptionId, SQLITE3_INTEGER);
+        $stmt->bindParam(':type', $type, SQLITE3_INTEGER);
 
         if ($stmt->execute()) {
             $success['status'] = "Success";

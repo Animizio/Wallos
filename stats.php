@@ -96,11 +96,13 @@ $mostExpensiveSubscription = array();
 $mostExpensiveSubscription['price'] = 0;
 $amountDueThisMonth = 0;
 $totalCostPerMonth = 0;
+$totalIncomePerMonth = 0;
+$totalNetPerMonth = 0;
 $totalSavingsPerMonth = 0;
 $totalCostsInReplacementsPerMonth = 0;
 
 $statsSubtitleParts = [];
-$query = "SELECT name, price, logo, frequency, cycle, currency_id, next_payment, payer_user_id, category_id, payment_method_id, inactive, replacement_subscription_id FROM subscriptions";
+$query = "SELECT name, price, logo, frequency, cycle, currency_id, next_payment, payer_user_id, category_id, payment_method_id, inactive, replacement_subscription_id, type FROM subscriptions";
 $conditions = [];
 $params = [];
 
@@ -170,7 +172,14 @@ if ($result) {
 
       if ($inactive == 0) {
         $activeSubscriptions++;
-        $totalCostPerMonth += $price;
+        if ($subscription['type'] == 1) {
+          // Einnahme
+          $totalIncomePerMonth += $price;
+        } else {
+          // Ausgabe
+          $totalCostPerMonth += $price;
+        }
+        $totalNetPerMonth = $totalIncomePerMonth - $totalCostPerMonth;
         $memberCost[$payerId]['cost'] += $price;
         $categoryCost[$categoryId]['cost'] += $price;
         $paymentMethodsCount[$paymentMethodId]['count'] += 1;
@@ -418,8 +427,24 @@ $showTotalMonthlyCostGraph = count($totalMonthlyCostDataPoints) > 1;
       <div class="title"><?= translate('monthly_cost', $i18n) ?></div>
     </div>
     <div class="statistic">
+      <span><?= CurrencyFormatter::format($totalIncomePerMonth, $code) ?></span>
+      <div class="title"><?= translate('monthly_income', $i18n) ?></div>
+    </div>
+    <div class="statistic">
+      <span><?= CurrencyFormatter::format($totalNetPerMonth, $code) ?></span>
+      <div class="title"><?= translate('monthly_net', $i18n) ?></div>
+    </div>
+    <div class="statistic">
       <span><?= CurrencyFormatter::format($totalCostPerYear, $code) ?></span>
       <div class="title"><?= translate('yearly_cost', $i18n) ?></div>
+    </div>
+    <div class="statistic">
+      <span><?= CurrencyFormatter::format($totalIncomePerMonth * 12, $code) ?></span>
+      <div class="title"><?= translate('yearly_income', $i18n) ?></div>
+    </div>
+    <div class="statistic">
+      <span><?= CurrencyFormatter::format($totalNetPerMonth * 12, $code) ?></span>
+      <div class="title"><?= translate('yearly_net', $i18n) ?></div>
     </div>
     <div class="statistic">
       <span><?= CurrencyFormatter::format($averageSubscriptionCost, $code) ?></span>

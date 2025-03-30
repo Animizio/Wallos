@@ -101,6 +101,16 @@ function fillEditFormFields(subscription) {
     autoRenew.checked = subscription.auto_renew;
   }
 
+  const typeExpense = document.querySelector("#type_expense");
+  const typeIncome = document.querySelector("#type_income");
+  if (typeExpense && typeIncome) {
+    if (subscription.type == 1) {
+      typeIncome.checked = true;
+    } else {
+      typeExpense.checked = true;
+    }
+  }
+
   const notifications = document.querySelector("#notifications");
   if (notifications) {
     notifications.checked = subscription.notify;

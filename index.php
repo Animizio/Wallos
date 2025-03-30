@@ -321,6 +321,16 @@ $headerClass = count($subscriptions) > 0 ? "main-actions" : "main-actions hidden
       </div>
     </div>
 
+    <div class="form-group">
+      <label><?= translate('type', $i18n) ?></label>
+      <div class="inline height50">
+        <input type="radio" id="type_expense" name="type" value="0" checked>
+        <label for="type_expense"><?= translate('expense', $i18n) ?></label>
+        <input type="radio" id="type_income" name="type" value="1">
+        <label for="type_income"><?= translate('income', $i18n) ?></label>
+      </div>
+    </div>
+
     <div class="form-group-inline">
       <input type="number" step="0.01" id="price" name="price" placeholder="<?= translate('price', $i18n) ?>" required>
       <select id="currency" name="currency_id" placeholder="<?= translate('add_subscription', $i18n) ?>">
